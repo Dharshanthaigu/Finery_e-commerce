@@ -22,3 +22,7 @@ class Product(BaseModel):
 
 class ProductOut(Product):
     id:str
+
+class CartItem(BaseModel):
+    product_id: str
+    quantity: int
