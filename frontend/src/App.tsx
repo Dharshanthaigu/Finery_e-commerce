@@ -19,7 +19,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login />} />       
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<ProtectedRoute><Products /></ProtectedRoute>} />
         <Route path="/products/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>} />

@@ -9,7 +9,12 @@ app = FastAPI(title="Ecommerce API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+        "http://localhost:5173",  # Vite dev
+        "http://localhost",       # Docker frontend
+        "http://localhost:80",    # Docker frontend explicit port
+        "http://127.0.0.1",       # alternative
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
