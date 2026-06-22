@@ -35,10 +35,10 @@ export default function OrderHistory() {
             </div>
             <ul style={{ margin: "0 0 12px", paddingLeft: 20 }}>
               {order.items.map((item, i) => (
-                <li key={i} style={{ color: "#555", marginBottom: 4 }}>{item.name} × {item.quantity} — ${item.price}</li>
+                <li key={i} style={{ color: "#555", marginBottom: 4 }}>{item.name} × {item.quantity} — ₹{item.price}</li>
               ))}
             </ul>
-            <div style={{ textAlign: "right", fontWeight: "bold", fontSize: 18 }}>Total: ${order.total}</div>
+            <div style={{ textAlign: "right", fontWeight: "bold", fontSize: 18 }}>Total: ₹{order.total}</div>
           </div>
         ))
       )}

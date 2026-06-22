@@ -12,12 +12,12 @@ export default function OrderComplete() {
       {order && (
         <div style={{ background: "#f9f9f9", padding: 20, borderRadius: 8, textAlign: "left", marginTop: 20 }}>
           <p><strong>Order ID:</strong> {order.id}</p>
-          <p><strong>Total:</strong> ${order.total}</p>
+          <p><strong>Total:</strong> ₹{order.total}</p>
           <p><strong>Status:</strong> {order.status}</p>
           <p><strong>Items:</strong></p>
           <ul>
             {order.items.map((item: any, i: number) => (
-              <li key={i}>{item.name} × {item.quantity} — ${item.price}</li>
+              <li key={i}>{item.name} × {item.quantity} — ₹{item.price}</li>
             ))}
           </ul>
         </div>

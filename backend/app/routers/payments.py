@@ -2,18 +2,23 @@ from fastapi import APIRouter, Depends, HTTPException
 from bson import ObjectId
 from app.database import orders_collection
 from app.dependencies import get_current_user
-from app.paypal import create_paypal_order, capture_paypal_order
+from app.razorpay_client import create_razorpay_order, verify_razorpay_signature
 from app.config import settings
 from pydantic import BaseModel
 
 router = APIRouter(prefix="/payments", tags=["payments"])
 
+
 class CreatePaymentRequest(BaseModel):
     order_id: str
 
-class CapturePaymentRequest(BaseModel):
+
+class VerifyPaymentRequest(BaseModel):
     order_id: str
-    paypal_order_id: str
+    razorpay_order_id: str
+    razorpay_payment_id: str
+    razorpay_signature: str
+
 
 @router.post("/create")
 async def create_payment(body: CreatePaymentRequest, current_user: dict = Depends(get_current_user)):
@@ -29,30 +34,30 @@ async def create_payment(body: CreatePaymentRequest, current_user: dict = Depend
     if order["status"] == "paid":
         raise HTTPException(status_code=400, detail="Order already paid")
 
-    # If no API key yet, return mock response
-    if not settings.paypal_client_id or settings.paypal_client_id == "your_paypal_client_id_here":
+    if not settings.razorpay_key_id:
         return {
             "mock": True,
             "order_id": body.order_id,
-            "approval_url": None,
-            "paypal_order_id": "MOCK_ORDER_ID",
-            "message": "PayPal key not configured — using mock payment"
+            "razorpay_order_id": "MOCK_ORDER_ID",
+            "amount": order["total"],
+            "key_id": None,
+            "message": "Razorpay key not configured — using mock payment",
         }
 
-    paypal_order = await create_paypal_order(order["total"])
-    approval_url = next(
-        (link["href"] for link in paypal_order["links"] if link["rel"] == "approve"),
-        None
-    )
+    razorpay_order = create_razorpay_order(order["total"], receipt=body.order_id)
+
     return {
         "mock": False,
         "order_id": body.order_id,
-        "paypal_order_id": paypal_order["id"],
-        "approval_url": approval_url,
+        "razorpay_order_id": razorpay_order["id"],
+        "amount": razorpay_order["amount"],
+        "currency": razorpay_order["currency"],
+        "key_id": settings.razorpay_key_id,
     }
 
-@router.post("/capture")
-async def capture_payment(body: CapturePaymentRequest, current_user: dict = Depends(get_current_user)):
+
+@router.post("/verify")
+async def verify_payment(body: VerifyPaymentRequest, current_user: dict = Depends(get_current_user)):
     user_id = current_user["sub"]
 
     if not ObjectId.is_valid(body.order_id):
@@ -62,21 +67,22 @@ async def capture_payment(body: CapturePaymentRequest, current_user: dict = Depe
     if not order:
         raise HTTPException(status_code=404, detail="Order not found")
 
-    # Mock capture if no API key
-    if body.paypal_order_id == "MOCK_ORDER_ID" or not settings.paypal_client_id or settings.paypal_client_id == "your_paypal_client_id_here":
+    if body.razorpay_order_id == "MOCK_ORDER_ID" or not settings.razorpay_key_id:
         await orders_collection.update_one(
             {"_id": ObjectId(body.order_id)},
-            {"$set": {"status": "paid", "payment_ref": "MOCK_PAYMENT"}}
+            {"$set": {"status": "paid", "payment_ref": "MOCK_PAYMENT"}},
         )
         return {"status": "paid", "message": "Mock payment successful", "order_id": body.order_id}
 
-    # Real PayPal capture
-    result = await capture_paypal_order(body.paypal_order_id)
-    if result["status"] == "COMPLETED":
-        await orders_collection.update_one(
-            {"_id": ObjectId(body.order_id)},
-            {"$set": {"status": "paid", "payment_ref": body.paypal_order_id}}
-        )
-        return {"status": "paid", "message": "Payment successful", "order_id": body.order_id}
+    is_valid = verify_razorpay_signature(
+        body.razorpay_order_id, body.razorpay_payment_id, body.razorpay_signature
+    )
 
-    raise HTTPException(status_code=400, detail="Payment not completed")
+    if not is_valid:
+        raise HTTPException(status_code=400, detail="Payment verification failed — signature mismatch")
+
+    await orders_collection.update_one(
+        {"_id": ObjectId(body.order_id)},
+        {"$set": {"status": "paid", "payment_ref": body.razorpay_payment_id}},
+    )
+    return {"status": "paid", "message": "Payment successful", "order_id": body.order_id}

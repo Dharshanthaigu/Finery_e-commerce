@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     paypal_client_id: str = ""
     paypal_secret: str = ""
     paypal_base_url: str = "https://api-m.sandbox.paypal.com"
+    razorpay_key_id: str = ""
+    razorpay_key_secret: str = ""
 
     class Config:
         env_file = ".env"
