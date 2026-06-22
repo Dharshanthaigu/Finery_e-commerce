@@ -32,6 +32,7 @@ async def create_order(current_user: dict = Depends(get_current_user)):
         "items": order_items,
         "total": round(total, 2),
         "status": "pending",
+        
     }
     result = await orders_collection.insert_one(order_doc)
 
@@ -41,6 +42,8 @@ async def create_order(current_user: dict = Depends(get_current_user)):
     order_doc["id"] = str(result.inserted_id)
     order_doc.pop("_id", None)
     return order_doc
+
+
 
 @router.get("/")
 async def list_orders(current_user: dict = Depends(get_current_user)):

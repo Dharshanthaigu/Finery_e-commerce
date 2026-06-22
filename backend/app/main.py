@@ -3,8 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.routers import auth
 from app.routers import auth, products
 from app.routers import auth, products, cart
-from app.routers import auth, products, cart, orders
-
+from app.routers import auth, products, cart, orders, payments
 
 app = FastAPI(title="Ecommerce API")
 
@@ -20,6 +19,7 @@ app.include_router(auth.router)
 app.include_router(products.router)
 app.include_router(cart.router)
 app.include_router(orders.router)
+app.include_router(payments.router)
 
 
 @app.get("/")
