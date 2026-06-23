@@ -120,44 +120,171 @@ useEffect(() => {
   };
 
   return (
-    <div style={{ maxWidth: 500, margin: "60px auto", padding: 32, background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-      <h2>Checkout</h2>
+  <div
+    style={{
+      maxWidth: "520px",
+      margin: "60px auto",
+      padding: "32px",
+      background: "#ffffff",
+      borderRadius: "20px",
+      boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+      border: "1px solid #e5e7eb",
+      fontFamily: "Inter, sans-serif",
+    }}
+  >
+    {/* Header */}
+    <h2
+      style={{
+        marginBottom: "24px",
+        color: "#1f2937",
+        textAlign: "center",
+        fontSize: "28px",
+        fontWeight: 700,
+      }}
+    >
+      Checkout
+    </h2>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    {error && (
+      <div
+        style={{
+          background: "#fef2f2",
+          color: "#dc2626",
+          padding: "12px",
+          borderRadius: "10px",
+          marginBottom: "20px",
+        }}
+      >
+        {error}
+      </div>
+    )}
 
-      {order ? (
-        <div style={{ background: "#f9f9f9", padding: 16, borderRadius: 8, marginBottom: 24 }}>
-          <h3 style={{ marginTop: 0 }}>Order Summary</h3>
-          {order.items?.map((item: any, i: number) => (
-            <div key={i} style={{ display: "flex", justifyContent: "space-between", marginBottom: 8 }}>
-              <span>{item.name} × {item.quantity}</span>
-              <span>₹{item.price}</span>
-            </div>
-          ))}
-          <hr />
-          <div style={{ display: "flex", justifyContent: "space-between", fontWeight: "bold", fontSize: 18 }}>
-            <span>Total</span>
-            <span>₹{order.total}</span>
+    {/* Order Summary */}
+    {order ? (
+      <div
+        style={{
+          background: "#f8fafc",
+          padding: "20px",
+          borderRadius: "14px",
+          marginBottom: "24px",
+          border: "1px solid #e2e8f0",
+        }}
+      >
+        <h3
+          style={{
+            marginTop: 0,
+            marginBottom: "16px",
+            color: "#111827",
+          }}
+        >
+          Order Summary
+        </h3>
+
+        {order.items?.map((item: any, i: number) => (
+          <div
+            key={i}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              marginBottom: "12px",
+              color: "#374151",
+            }}
+          >
+            <span>
+              {item.name} × {item.quantity}
+            </span>
+            <span>₹{item.price}</span>
           </div>
+        ))}
+
+        <hr
+          style={{
+            border: 0,
+            borderTop: "1px solid #e5e7eb",
+            margin: "16px 0",
+          }}
+        />
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontWeight: 700,
+            fontSize: "20px",
+            color: "#111827",
+          }}
+        >
+          <span>Total</span>
+          <span style={{ color: "#3395FF" }}>₹{order.total}</span>
         </div>
-      ) : (
-        <p style={{ color: "#999" }}>Loading order...</p>
-      )}
-
-      <div style={{ background: "#fff3cd", padding: 12, borderRadius: 8, marginBottom: 20, fontSize: 13, color: "#856404" }}>
-        💳 Razorpay test mode — no real payment will be made
       </div>
+    ) : (
+      <p style={{ textAlign: "center", color: "#6b7280" }}>
+        Loading order...
+      </p>
+    )}
 
-      <div style={{ display: "flex", gap: 12 }}>
-        <button onClick={() => navigate("/cart")}
-          style={{ flex: 1, padding: 12, background: "transparent", border: "1px solid #2c3e50", borderRadius: 6, cursor: "pointer" }}>
-          Back to Cart
-        </button>
-        <button onClick={handlePayment} disabled={loading || !order}
-          style={{ flex: 1, padding: 12, background: "#3395FF", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontSize: 16 }}>
-          {loading ? "Processing..." : "Pay with Razorpay"}
-        </button>
-      </div>
+    {/* Razorpay Notice */}
+    <div
+      style={{
+        background: "#eff6ff",
+        color: "#1d4ed8",
+        padding: "14px",
+        borderRadius: "12px",
+        marginBottom: "24px",
+        border: "1px solid #bfdbfe",
+        fontSize: "14px",
+      }}
+    >
+      💳 Razorpay Test Mode — No real payment will be made.
     </div>
-  );
+
+    {/* Buttons */}
+    <div
+      style={{
+        display: "flex",
+        gap: "12px",
+      }}
+    >
+      <button
+        onClick={() => navigate("/cart")}
+        style={{
+          flex: 1,
+          padding: "14px",
+          borderRadius: "12px",
+          border: "1px solid #d1d5db",
+          background: "#ffffff",
+          color: "#374151",
+          fontWeight: 600,
+          cursor: "pointer",
+          transition: "0.2s",
+        }}
+      >
+        ← Back to Cart
+      </button>
+
+      <button
+        onClick={handlePayment}
+        disabled={loading || !order}
+        style={{
+          flex: 1,
+          padding: "14px",
+          borderRadius: "12px",
+          border: "none",
+          background:
+            loading || !order
+              ? "#93c5fd"
+              : "linear-gradient(135deg, #3395FF, #2563eb)",
+          color: "#fff",
+          fontWeight: 600,
+          fontSize: "16px",
+          cursor: loading ? "not-allowed" : "pointer",
+          boxShadow: "0 6px 15px rgba(51,149,255,0.3)",
+        }}
+      >
+        {loading ? "Processing..." : "Pay with Razorpay"}
+      </button>
+    </div>
+  </div>
+);
 }

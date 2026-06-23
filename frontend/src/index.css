@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap');
+
 :root {
   --text: #6b6375;
   --text-h: #08060d;
@@ -30,6 +32,78 @@
   }
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f0f2f5;
+  color: #1a1a2e;
+  min-height: 100vh;
+}
+
+:root {
+  --primary: #6c63ff;
+  --primary-dark: #5a52d5;
+  --secondary: #00d4aa;
+  --accent: #ff6b6b;
+  --dark: #1a1a2e;
+  --dark-2: #16213e;
+  --dark-3: #0f3460;
+  --light: #f0f2f5;
+  --card-bg: #ffffff;
+  --text: #1a1a2e;
+  --text-light: #6b7280;
+  --border: #e5e7eb;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 30px rgba(108,99,255,0.2);
+  --radius: 16px;
+  --radius-sm: 10px;
+
+  /* --- Finery theme tokens (from theme.ts) --- */
+  --finery-ink: #1A1A2E;
+  --finery-ink-soft: #4A4A68;
+  --finery-cream: #FFF8F3;
+  --finery-card: #FFFFFF;
+  --finery-border: #EFE6DD;
+  --finery-violet: #7C6FFF;
+  --finery-pink: #FF6B9D;
+  --finery-gradient: linear-gradient(135deg, #7C6FFF 0%, #FF6B9D 100%);
+  --finery-success: #1F9D6B;
+  --finery-success-bg: #E9F8F0;
+  --finery-warning: #E8923C;
+  --finery-warning-bg: #FDF1E3;
+  --finery-danger: #E15554;
+  --finery-danger-bg: #FCEAEA;
+  --finery-display: 'Outfit', 'Poppins', sans-serif;
+  --finery-body: 'Inter', -apple-system, sans-serif;
+}
+
+a { text-decoration: none; color: inherit; }
+
+button { font-family: 'Inter', sans-serif; }
+
+input, select { font-family: 'Inter', sans-serif; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f0f2f5; }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+.skeleton {
+  background: linear-gradient(90deg, #e5e7eb 25%, #f3f4f6 50%, #e5e7eb 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --text: #9ca3af;
@@ -51,11 +125,10 @@
 }
 
 #root {
-  width: 1126px;
+  width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
+  text-align: left;
   min-height: 100svh;
   display: flex;
   flex-direction: column;
