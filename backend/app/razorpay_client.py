@@ -3,6 +3,9 @@ import hmac
 import hashlib
 from app.config import settings
 
+import logging
+logger = logging.getLogger(__name__)
+
 client = razorpay.Client(auth=(settings.razorpay_key_id, settings.razorpay_key_secret))
 
 
@@ -19,9 +22,9 @@ def create_razorpay_order(amount: float, currency: str = "INR", receipt: str = "
 
 def verify_razorpay_signature(razorpay_order_id: str, razorpay_payment_id: str, razorpay_signature: str) -> bool:
     generated_signature = hmac.new(
-        key=settings.razorpay_key_secret.encode(),
-        msg=f"{razorpay_order_id}|{razorpay_payment_id}".encode(),
-        digestmod=hashlib.sha256,
+        settings.razorpay_key_secret.encode(),
+        f"{razorpay_order_id}|{razorpay_payment_id}".encode(),
+        hashlib.sha256,
     ).hexdigest()
     return hmac.compare_digest(generated_signature, razorpay_signature)
 

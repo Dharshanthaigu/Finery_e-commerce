@@ -24,6 +24,18 @@ async def add_to_cart(item: CartItem, current_user: dict = Depends(get_current_u
     product = await products_collection.find_one({"_id": ObjectId(item.product_id)})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
+    
+    #stock validation 
+    if product["stock"] <= 0:
+        raise HTTPException(status_code=400, detail="Product is out of stock")
+    if item.quantity > product["stock"]:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Only {product['stock']} items available in stock"
+        )
+    if item.quantity <= 0:
+        raise HTTPException(status_code=400, detail="Quantity must be at least 1")
+
 
     cart = await carts_collection.find_one({"user_id": user_id})
     if not cart:
@@ -33,12 +45,21 @@ async def add_to_cart(item: CartItem, current_user: dict = Depends(get_current_u
         found = False
         for i in items:
             if i["product_id"] == item.product_id:
-                i["quantity"] += item.quantity
+                new_qty = i["quantity"] + item.quantity
+                if new_qty > product["stock"]:
+                    raise HTTPException(
+                        status_code=400,
+                        detail=f"Cannot add more. Only {product['stock']} items in stock"
+                    )
+                i["quantity"] = new_qty
                 found = True
                 break
         if not found:
             items.append(item.dict())
-        await carts_collection.update_one({"user_id": user_id}, {"$set": {"items": items}})
+        await carts_collection.update_one(
+            {"user_id": user_id},
+            {"$set": {"items": items}}
+        )
 
     updated = await carts_collection.find_one({"user_id": user_id})
     updated["_id"] = str(updated["_id"])

@@ -1,4 +1,6 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional, List
+
 
 class UserRegister(BaseModel):
     name: str
@@ -18,7 +20,11 @@ class Product(BaseModel):
     description: str
     price: float
     image_url: str
+    images: Optional[List[str]] = []
+    category: Optional[str] = ""
     stock: int
+    rating: Optional[float] = 0
+    brand: Optional[str] = ""
 
 class ProductOut(Product):
     id:str

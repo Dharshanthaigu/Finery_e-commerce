@@ -33,6 +33,7 @@ export default function Products() {
         <h1 style={{ margin: 0 }}>Finery Store</h1>
         <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
           <span style={{ color: "#555" }}>{email}</span>
+          <button onClick={() => navigate("/admin/products")} style={btnStyle}>⚙️ Admin</button>
           <button onClick={() => navigate("/cart")} style={btnStyle}>🛒 Cart</button>
           <button onClick={() => navigate("/orders")} style={btnStyle}>My Orders</button>
           <button onClick={() => { logout(); navigate("/login"); }} style={{ ...btnStyle, background: "#e74c3c" }}>Logout</button>

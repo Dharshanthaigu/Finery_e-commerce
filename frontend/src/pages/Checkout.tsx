@@ -34,11 +34,14 @@ useEffect(() => {
     const createOrder = async () => {
       try {
         const res = await api.post("/orders/");
-        console.log("Created order response:", res.data);
-        console.log("Order ID:", res.data.id);
         setOrder(res.data);
       } catch (e: any) {
-        setError(e.response?.data?.detail || "Failed to create order. Make sure your cart is not empty.");
+        const detail = e.response?.data?.detail || "";
+        if (detail.toLowerCase().includes("empty")) {
+          navigate("/cart");  // redirect back to cart if empty
+        } else {
+          setError(detail || "Failed to create order.");
+        }
       }
     };
     if (!location.state?.order) {
